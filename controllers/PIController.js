@@ -147,40 +147,55 @@ exports.getAllPIs = async (req, res) => {
   }
 };
 
-exports.getPiCounts = async(req,res)=>{
+exports.getPiCounts = async (req, res) => {
   try {
-    console.log('counting all pis');
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    const dateFilter = (startDate && endDate)
+      ? {
+          PI_DATE: { [Op.between]: [startDate, endDate] },
+        }
+      : {};
+
     const allPiCount = await PIEntity.findAndCountAll();
-    console.log('counting pending pis');
+
     const piPendingCount = await PIEntity.findAndCountAll({
-      where:{
-        status:'pending'
-      }
-    })
-    console.log('counting pending priority pis');
+      where: {
+        status: 'pending',
+        ...dateFilter, // Include date filter if present
+      },
+    });
+
     const piPriorityPendingCount = await PIEntity.findAndCountAll({
-      where:{
-        status:'pending',
-        isPriority:true
-      }
-    })
-    console.log('counting approved pis');
+      where: {
+        status: 'pending',
+        isPriority: true,
+        ...dateFilter, // Include date filter if present
+      },
+    });
+
     const piAprrovedCount = await PIEntity.findAndCountAll({
-      where:{
-        status:'approved'
-      }
-    })
-    res.json({data:{
-      approvedCount:piAprrovedCount.count,
-      pendingCount:piPendingCount.count,
-      priorityPendingCount:piPriorityPendingCount.count,
-      countAll:allPiCount.count
-    }})
+      where: {
+        status: 'approved',
+        ...dateFilter, // Include date filter if present
+      },
+    });
+
+    res.json({
+      data: {
+        approvedCount: piAprrovedCount.count,
+        pendingCount: piPendingCount.count,
+        priorityPendingCount: piPriorityPendingCount.count,
+        countAll: allPiCount.count,
+      },
+    });
   } catch (error) {
-    console.log("error in count  pi controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    console.log("error in count pi controller: ", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
-}
+};
+
 
 exports.getPIById = async (req, res) => {
   try {
