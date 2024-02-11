@@ -53,6 +53,17 @@ const PIEntity = sequelize.define('PIEntity',{
         type: DataTypes.STRING,
         allowNull: true,
       },
+      status:{
+        type:DataTypes.STRING,
+        defaultValue: 'pending',
+      },
+      country:{
+        type:DataTypes.STRING,
+      },
+      isPriority:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false,
+      }
 })
 
 

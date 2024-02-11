@@ -7,6 +7,7 @@ const PIEntity = require("../entities/piEntity");
 const FCEntity = require("../entities/FCEntity");
 const materialEntity = require("../entities/materialsEntity");
 const suplierEntity = require("../entities/supplierEntity");
+const sequelize = require("../db");
 
 exports.generatePI = async (req, res) => {
   const validantionErrors = validator.validationResult(req);
@@ -96,7 +97,7 @@ exports.getAllPIs = async (req, res) => {
         { SUPPLIER_NAME: { [Op.like]: `%${search}%` } },
       ];
     }
-if (priceFrom !== 0 || priceTo !== Number.MAX_SAFE_INTEGER) {
+    if (priceFrom > 0 || priceTo < Number.MAX_SAFE_INTEGER) {
   whereCondition.PI_VALUE = {
     [Op.between]: [priceFrom || 0, priceTo || Number.MAX_SAFE_INTEGER],
   };
@@ -121,7 +122,19 @@ if (priceFrom !== 0 || priceTo !== Number.MAX_SAFE_INTEGER) {
     const allPi = await PIEntity.findAll({
       where: whereCondition,
       limit:pageSize,
-      offset:offset
+      offset:offset,
+      attributes:[
+        ['PI_VALUE','value'],
+        ['status','status'],
+        ['isPriority','priority'],
+        ['country','country'],
+        ['SUPPLIER_NAME','supplier'],
+        ['MATERIAL_CATAGORY','material'],
+        ['FC','currency'],
+        ['PI_DATE','date'],
+        ['PI_NUMBER','piNumber'],
+        ['Bank_Name','bankName']
+      ]
     });
 
     const totalCount = await PIEntity.findAndCountAll()
@@ -133,6 +146,41 @@ if (priceFrom !== 0 || priceTo !== Number.MAX_SAFE_INTEGER) {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+exports.getPiCounts = async(req,res)=>{
+  try {
+    console.log('counting all pis');
+    const allPiCount = await PIEntity.findAndCountAll();
+    console.log('counting pending pis');
+    const piPendingCount = await PIEntity.findAndCountAll({
+      where:{
+        status:'pending'
+      }
+    })
+    console.log('counting pending priority pis');
+    const piPriorityPendingCount = await PIEntity.findAndCountAll({
+      where:{
+        status:'pending',
+        isPriority:true
+      }
+    })
+    console.log('counting approved pis');
+    const piAprrovedCount = await PIEntity.findAndCountAll({
+      where:{
+        status:'approved'
+      }
+    })
+    res.json({data:{
+      approvedCount:piAprrovedCount.count,
+      pendingCount:piPendingCount.count,
+      priorityPendingCount:piPriorityPendingCount.count,
+      countAll:allPiCount.count
+    }})
+  } catch (error) {
+    console.log("error in count  pi controller: ", error);
+    res.status(500).json({ message: "Somethung went wrong" });
+  }
+}
 
 exports.getPIById = async (req, res) => {
   try {

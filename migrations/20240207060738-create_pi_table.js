@@ -51,6 +51,17 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      status:{
+        type:Sequelize.STRING,
+        defaultValue: 'pending'
+      },
+      isPriority:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:false
+      },
+      country:{
+        type:Sequelize.STRING
+      },
       createdAt: {
         type: Sequelize.DATE,
       },

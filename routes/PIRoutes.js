@@ -18,8 +18,9 @@ router.post(
   PIController.generatePI
 );
 router.get("/", verifyToken,PIController.getAllPIs);
-router.get("/:id", verifyToken,PIController.getPIById);
-router.delete("/:id", verifyToken,PIController.deletePIById);
+router.get("/count", verifyToken,PIController.getPiCounts);
 router.patch("/:id", verifyToken,PIController.updatePIById);
+router.delete("/:id", verifyToken,PIController.deletePIById);
+router.get("/:id", verifyToken,PIController.getPIById);
 
 module.exports = router;

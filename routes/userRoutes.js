@@ -14,7 +14,7 @@ router.post(
       .notEmpty()
       .isLength({ min: 8 }),
     check("typeOfUser", "User type is required").isString().notEmpty(),
-  ],verifyToken,
+  ],
   userController.createUser
 );
 router.get("/", verifyToken,userController.getAllUsers);
