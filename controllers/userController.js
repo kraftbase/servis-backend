@@ -61,18 +61,34 @@ exports.updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const newData = req.body;
-    const exsistingUser = await userEntity.findByPk(userId);
-    if (!exsistingUser) {
+    const existingUser = await userEntity.findByPk(userId);
+
+    if (!existingUser) {
       return res.status(404).json({ message: "No user found" });
     }
-    const updatedUser = await userEntity.update(newData, {
-      where: { userId: userId },
-      individualHooks: true,
-    });
-    res.json({ message: "user updated successfully" });
+
+    // Check if new password is provided in the request body and is truthy
+    if (newData.password) {
+      // If password is provided and truthy, update it along with other fields
+      const updatedUser = await userEntity.update(newData, {
+        where: { userId: userId },
+        individualHooks: true,
+      });
+      res.json({ message: "User updated successfully" });
+    } else {
+      // If password is not provided or is falsy, update other fields without changing the password
+      const { password, ...updatedDataWithoutPassword } = newData;
+
+      const updatedUser = await userEntity.update(updatedDataWithoutPassword, {
+        where: { userId: userId },
+        individualHooks: true,
+      });
+
+      res.json({ message: "User updated successfully" });
+    }
   } catch (error) {
-    console.log("error in update user controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    console.log("Error in update user controller: ", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 

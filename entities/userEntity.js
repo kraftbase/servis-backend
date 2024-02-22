@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const sequelize = require("../db");
 
 const userEntity = sequelize.define(
-  "userEntity",
+  "userEntities",
   {
     userId: {
       type: DataTypes.INTEGER,
@@ -34,15 +34,15 @@ const userEntity = sequelize.define(
           user.password = await bcrypt.hash(user.password, 8);
         }
       },
-     beforeUpdate: async(user,options)=>{
-        console.log('calling before update hook')
-        if(user.changed('password')){
-            console.log('hasing password')
-            user.password = await bcrypt.hash(user.password, 8);
-        }else{
-            console.log('moved to else block')
+      beforeUpdate: async (user, options) => {
+        console.log("calling before update hook");
+        if (user.changed("password")) {
+          console.log("hasing password");
+          user.password = await bcrypt.hash(user.password, 8);
+        } else {
+          console.log("moved to else block");
         }
-     }
+      },
     },
   }
 );

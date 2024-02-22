@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('PIEntities', {
+    await queryInterface.createTable("PIEntities", {
       PI_NUMBER: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -17,39 +17,67 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'supplierEntities', // Assuming the name of your supplier table
-          key: 'SUPPLIER',            // Assuming the primary key of supplierEntities is 'SUPPLIER'
+          model: "supplierEntities", // Updated to lowercase
+          key: "SUPPLIER",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       MATERIAL_CATAGORY: {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'materialEntities',  // Assuming the name of your material table
-          key: 'MATERIAL_CATAGORY',  // Assuming the primary key of materialEntities is 'MATERIAL_CATAGORY'
+          model: "materialEntities",
+          key: "MATERIAL_CATAGORY",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       FC: {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'FCEntities',       // Assuming the name of your FC table
-          key: 'FC',                 // Assuming the primary key of FCEntities is 'FC'
+          model: "FCEntities",
+          key: "FC",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       PI_VALUE: {
-        type: Sequelize.NUMBER,
+        type: Sequelize.FLOAT,
         allowNull: true,
       },
-      Bank_Name: {
+      bankDetails: {
+        type: Sequelize.STRING, // Change to the correct data type if it's not a string
+        allowNull: false,
+        references: {
+          model: "bankEntities",
+          key: "bankCode", // Change this to the correct field in bankEntities
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      status: {
         type: Sequelize.STRING,
-        allowNull: true,
+        defaultValue: "pending",
+      },
+      country: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        references: {
+          model: "countryEntities",
+          key: "COUNTRY",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      isPriority: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      documents: {
+        type: Sequelize.TEXT,
+        allowNull: false,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -63,6 +91,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PIEntities');
-  }
+    await queryInterface.dropTable("PIEntities");
+  },
 };

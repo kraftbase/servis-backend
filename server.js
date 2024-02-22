@@ -10,8 +10,8 @@ const app = express();
 
 const connectDatabase = async () => {
   try {
-   await sequelize.authenticate()
-   console.log('Successfully connected to db')
+    await sequelize.authenticate();
+    console.log("Successfully connected to db");
   } catch (error) {
     console.log(error);
   }
