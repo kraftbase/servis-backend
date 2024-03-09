@@ -17,9 +17,9 @@ router.post(
   ],
   userController.createUser
 );
-router.get("/", verifyToken,userController.getAllUsers);
-router.get("/:id", verifyToken,userController.getUserById);
-router.patch("/:id", verifyToken,userController.updateUserById);
-router.delete("/:id", verifyToken,userController.deleteUserById);
+router.get("/", verifyToken, userController.getAllUsers);
+router.get("/:id", verifyToken, userController.getUserById);
+router.patch("/:id", verifyToken, userController.updateUserById);
+router.delete("/:id", verifyToken, userController.deleteUserById);
 
 module.exports = router;

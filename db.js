@@ -1,14 +1,14 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize({
-  dialect: 'oracle',
-  host: 'localhost',
+  dialect: "oracle",
+  host: process.env.ORACLE_HOST,
   port: 1521, // Replace with your Oracle database port
-  username: 'system',
-  password: 'Oracle_123',
-  database: 'ORCLCDB',
+  username: process.env.ORACLE_USERNAME,
+  password: process.env.ORACLE_PWD,
+  database: process.env.ORACLE_SID,
   define: {
-    timestamps: true, 
+    timestamps: true,
   },
 });
 

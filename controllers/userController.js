@@ -53,7 +53,7 @@ exports.deleteUserById = async (req, res) => {
     }
   } catch (error) {
     console.log("error in delete user controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -61,25 +61,49 @@ exports.updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const newData = req.body;
-    const exsistingUser = await userEntity.findByPk(userId);
-    if (!exsistingUser) {
+    console.log("new data for user is: ", newData);
+    const existingUser = await userEntity.findByPk(userId);
+
+    if (!existingUser) {
       return res.status(404).json({ message: "No user found" });
     }
-    const updatedUser = await userEntity.update(newData, {
-      where: { userId: userId },
-      individualHooks: true,
-    });
-    res.json({ message: "user updated successfully" });
+
+    // Check if new password is provided in the request body and is truthy
+    if (newData.password) {
+      // If password is provided and truthy, update it along with other fields
+      const updatedUser = await userEntity.update(newData, {
+        where: { userId: userId },
+        individualHooks: true,
+      });
+      res.json({ message: "User updated successfully" });
+    } else {
+      // If password is not provided or is falsy, update other fields without changing the password
+      const { password, ...updatedDataWithoutPassword } = newData;
+
+      const updatedUser = await userEntity.update(updatedDataWithoutPassword, {
+        where: { userId: userId },
+        individualHooks: true,
+      });
+
+      res.json({ message: "User updated successfully" });
+    }
   } catch (error) {
-    console.log("error in update user controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    console.log("Error in update user controller: ", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const foundUser = await userEntity.findByPk(userId);
+    const foundUser = await userEntity.findByPk(userId, {
+      attributes: [
+        ["userId", "userId"],
+        ["name", "name"],
+        ["email", "email"],
+        ["typeOfUser", "typeOfUser"],
+      ],
+    });
     if (!foundUser || foundUser.length === 0) {
       return res.status(404).json({ message: "No user found for the id" });
     }
@@ -95,10 +119,16 @@ exports.getAllUsers = async (req, res) => {
     const search = req.query.search ? req.query.search : "";
     const allUsers = await userEntity.findAll({
       where: { name: { [Op.like]: `%${search}%` } },
+      attributes: [
+        ["userId", "userId"],
+        ["name", "name"],
+        ["email", "email"],
+        ["typeOfUser", "typeOfUser"],
+      ],
     });
     res.json(allUsers);
   } catch (error) {
     console.log("error in find  pi controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };

@@ -1,26 +1,31 @@
 const express = require("express");
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
 const PIController = require("../controllers/PIController");
 const verifyToken = require("../controllers/middleware");
 const router = express.Router();
 
+const multer = require("multer");
+const { uploadToStorage } = require("../controllers/fileUploads");
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 router.post(
   "/",
-  [
-    check("PI_NUMBER", "Pi number is required").isString().notEmpty(),
-    check("SUPPLIER_NAME", "suppliers name is required").isString().notEmpty(),
-    check("MATERIAL_CATAGORY", "material CATAGORY is required")
-      .isString()
-      .notEmpty(),
-    check("PI_VALUE", "value is required").isNumeric().notEmpty(),
-    check("FC", "Currency type is required").isLength({ max: 3 }).notEmpty(),
-  ],verifyToken,
+  verifyToken,
+  upload.single("documents"),
+  uploadToStorage,
   PIController.generatePI
 );
-router.get("/", verifyToken,PIController.getAllPIs);
-router.get("/count", verifyToken,PIController.getPiCounts);
-router.patch("/:id", verifyToken,PIController.updatePIById);
-router.delete("/:id", verifyToken,PIController.deletePIById);
-router.get("/:id", verifyToken,PIController.getPIById);
+
+router.get("/", verifyToken, PIController.getAllPIs);
+router.get("/count", verifyToken, PIController.getPiCounts);
+router.patch(
+  "/:id",
+  verifyToken,
+  upload.single("documents"),
+  PIController.updatePIById
+);
+router.delete("/:id", verifyToken, PIController.deletePIById);
+router.get("/:id", verifyToken, PIController.getPIById);
 
 module.exports = router;
