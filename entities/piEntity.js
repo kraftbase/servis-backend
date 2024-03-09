@@ -53,17 +53,13 @@ const PIEntity = sequelize.define("PIEntities", {
   },
   bankDetails: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: "bankEntities",
       key: "bankCode",
     },
     onUpdate: "CASCADE",
     onDelete: "CASCADE",
-  },
-  status: {
-    type: DataTypes.STRING,
-    defaultValue: "pending",
   },
   country: {
     type: DataTypes.STRING,
@@ -82,7 +78,6 @@ const PIEntity = sequelize.define("PIEntities", {
   },
   documents: {
     type: DataTypes.TEXT,
-    allowNull: false,
   },
 });
 

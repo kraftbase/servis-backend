@@ -1,5 +1,10 @@
-const serviceAccount = require("../servis-app-2a54c-firebase-adminsdk-ez9dx-4e52433e62.json");
 const admin = require("firebase-admin");
+
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+};
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -12,13 +17,11 @@ const firestore = admin.firestore();
 exports.uploadToStorage = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res
-        .status(400)
-        .json({ message: "Document or image file missing" });
+      return next();
     }
     const file = req.file;
 
-    const fileUpload = storage.file(file.originalname);
+    const fileUpload = storage.file(file.originalname || "");
     const stream = fileUpload.createWriteStream();
     stream.end(file.buffer);
 

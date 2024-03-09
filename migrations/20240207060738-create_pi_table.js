@@ -49,17 +49,13 @@ module.exports = {
       },
       bankDetails: {
         type: Sequelize.STRING, // Change to the correct data type if it's not a string
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "bankEntities",
           key: "bankCode", // Change this to the correct field in bankEntities
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
-      },
-      status: {
-        type: Sequelize.STRING,
-        defaultValue: "pending",
       },
       country: {
         type: Sequelize.STRING,
@@ -77,7 +73,7 @@ module.exports = {
       },
       documents: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

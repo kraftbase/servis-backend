@@ -19,7 +19,12 @@ router.post(
 
 router.get("/", verifyToken, PIController.getAllPIs);
 router.get("/count", verifyToken, PIController.getPiCounts);
-router.patch("/:id", verifyToken, PIController.updatePIById);
+router.patch(
+  "/:id",
+  verifyToken,
+  upload.single("documents"),
+  PIController.updatePIById
+);
 router.delete("/:id", verifyToken, PIController.deletePIById);
 router.get("/:id", verifyToken, PIController.getPIById);
 

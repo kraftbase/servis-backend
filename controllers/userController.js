@@ -53,7 +53,7 @@ exports.deleteUserById = async (req, res) => {
     }
   } catch (error) {
     console.log("error in delete user controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -61,6 +61,7 @@ exports.updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const newData = req.body;
+    console.log("new data for user is: ", newData);
     const existingUser = await userEntity.findByPk(userId);
 
     if (!existingUser) {
@@ -95,7 +96,14 @@ exports.updateUserById = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const foundUser = await userEntity.findByPk(userId);
+    const foundUser = await userEntity.findByPk(userId, {
+      attributes: [
+        ["userId", "userId"],
+        ["name", "name"],
+        ["email", "email"],
+        ["typeOfUser", "typeOfUser"],
+      ],
+    });
     if (!foundUser || foundUser.length === 0) {
       return res.status(404).json({ message: "No user found for the id" });
     }
@@ -111,10 +119,16 @@ exports.getAllUsers = async (req, res) => {
     const search = req.query.search ? req.query.search : "";
     const allUsers = await userEntity.findAll({
       where: { name: { [Op.like]: `%${search}%` } },
+      attributes: [
+        ["userId", "userId"],
+        ["name", "name"],
+        ["email", "email"],
+        ["typeOfUser", "typeOfUser"],
+      ],
     });
     res.json(allUsers);
   } catch (error) {
     console.log("error in find  pi controller: ", error);
-    res.status(500).json({ message: "Somethung went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
