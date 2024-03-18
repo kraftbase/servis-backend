@@ -1,18 +1,30 @@
-const jwt = require('jsonwebtoken')
+// Importing JWT module
+const jwt = require("jsonwebtoken");
 
-const verifyToken = (req,res,next)=>{
-    const token = req.cookies['auth_token']
-    if(!token){
-        return res.status(401).json({message:'unauthorized'});
-    }
-    
-    try {
-        const decoded = jwt.verify(token,process.env.JWT_SECERET_KEY)
-        req.userId = decoded.userId
-        next()
-    } catch (error) {
-        return res.status(401).json({message:'unauthorized'}); 
-    }
-}
+// Middleware function to verify JWT token
+const verifyToken = (req, res, next) => {
+  // Extracting token from request cookies
+  const token = req.cookies["auth_token"];
 
-module.exports =  verifyToken
+  // If token doesn't exist, return unauthorized status
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    // Verifying the token using JWT with the provided secret key
+    const decoded = jwt.verify(token, process.env.JWT_SECERET_KEY);
+
+    // Storing the decoded user ID in request object for further use
+    req.userId = decoded.userId;
+
+    // Proceed to the next middleware
+    next();
+  } catch (error) {
+    // If token verification fails, return unauthorized status
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+// Exporting the verifyToken middleware function
+module.exports = verifyToken;

@@ -1,19 +1,29 @@
-const dotenv = require('dotenv')
+// Import the dotenv module to load environment variables from .env file
+const dotenv = require("dotenv");
 
-const envFound = dotenv.config()
+// Load environment variables from .env file
+const envFound = dotenv.config();
 
+// If there's an error loading the environment variables, throw an error and crash the process
 if (envFound.error) {
-    // This error should crash whole process
-    throw new Error("⚠️  Couldn't find .env file  ⚠️")
+  throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
+// Configuration object containing various environment variables
 const config = {
-    PORT: process.env.PORT || 3000,
-    JWT_SECRET: process.env.JWT_SECRET || 'D6FnhgHSJADAKSDHAdsSsJDf23vds',
-    JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '4d',
-    NODE_ENV: process.env.NODE_ENV || 'dev',
-    PI_SCHEMA: 'PI',
-    USER_SCHEMA: 'USER'
-}
+  // Port number for the server to listen on, default is 3000
+  PORT: process.env.PORT || 3000,
+  // Secret key for JWT token generation, default is a random string
+  JWT_SECRET: process.env.JWT_SECRET || "D6FnhgHSJADAKSDHAdsSsJDf23vds",
+  // Expiry time for JWT tokens, default is 4 days
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "4d",
+  // Environment mode, default is 'dev'
+  NODE_ENV: process.env.NODE_ENV || "dev",
+  // Schema name for PI entities
+  PI_SCHEMA: "PI",
+  // Schema name for user entities
+  USER_SCHEMA: "USER",
+};
 
-module.exports = config
+// Export the configuration object
+module.exports = config;
